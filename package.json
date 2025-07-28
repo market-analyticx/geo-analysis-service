@@ -1,19 +1,22 @@
 {
-  "name": "llm-brand-analysis-service",
+  "name": "geo-analysis-service",
   "version": "1.0.0",
-  "description": "LLM Brand Visibility Analysis Service - MVP",
+  "description": "Geo Analysis Service - Geographic Brand Visibility Analysis",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "test": "jest",
     "lint": "eslint src/",
-    "lint:fix": "eslint src/ --fix"
+    "lint:fix": "eslint src/ --fix",
+    "setup": "node scripts/setup.js"
   },
   "keywords": [
+    "geo-analysis",
     "brand-analysis",
     "llm",
     "openai",
+    "geographic-analysis",
     "api"
   ],
   "author": "Your Name",

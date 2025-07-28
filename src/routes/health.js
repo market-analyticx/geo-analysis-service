@@ -11,10 +11,12 @@ const router = express.Router();
 router.get('/', asyncHandler(async (req, res) => {
   res.json({
     status: 'ok',
-    service: 'LLM Brand Analysis Service',
+    service: 'Geo Analysis Service',
     version: '1.0.0',
+    description: 'Geographic Brand Visibility Analysis across LLMs',
     timestamp: new Date().toISOString(),
-    uptime: process.uptime()
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV || 'development'
   });
 }));
 
@@ -46,6 +48,7 @@ router.get('/detailed', asyncHandler(async (req, res) => {
     checks.filesystem = {
       status: 'operational',
       reportsDirectory: 'accessible',
+      logsDirectory: 'accessible',
       totalReports: stats.totalReports
     };
   } catch (error) {
@@ -62,15 +65,27 @@ router.get('/detailed', asyncHandler(async (req, res) => {
     status: 'operational',
     heapUsed: `${Math.round(memUsage.heapUsed / 1024 / 1024)}MB`,
     heapTotal: `${Math.round(memUsage.heapTotal / 1024 / 1024)}MB`,
-    external: `${Math.round(memUsage.external / 1024 / 1024)}MB`
+    external: `${Math.round(memUsage.external / 1024 / 1024)}MB`,
+    rss: `${Math.round(memUsage.rss / 1024 / 1024)}MB`
+  };
+
+  // System information
+  checks.system = {
+    status: 'operational',
+    nodeVersion: process.version,
+    platform: process.platform,
+    arch: process.arch,
+    pid: process.pid
   };
 
   res.json({
     status: overallStatus,
-    service: 'LLM Brand Analysis Service',
+    service: 'Geo Analysis Service',
     version: '1.0.0',
+    description: 'Geographic Brand Visibility Analysis across LLMs',
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
+    environment: process.env.NODE_ENV || 'development',
     checks
   });
 }));

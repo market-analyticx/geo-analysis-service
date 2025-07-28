@@ -5,9 +5,13 @@ const logger = require('./utils/logger');
 const PORT = config.port;
 
 app.listen(PORT, () => {
-  logger.info(`🚀 LLM Brand Analysis Service started on port ${PORT}`);
-  logger.info(`📊 Environment: ${config.nodeEnv}`);
-  logger.info(`📝 Reports directory: ${config.reportsDir}`);
+  logger.info(`🌍 Geo Analysis Service started successfully`);
+  logger.info(`📍 Server running on port ${PORT}`);
+  logger.info(`🏃 Environment: ${config.nodeEnv}`);
+  logger.info(`📂 Reports directory: ${config.reportsDir}`);
+  logger.info(`📝 Logs directory: ${config.logsDir}`);
+  logger.info(`🔗 Service URL: http://localhost:${PORT}`);
+  logger.info(`🏥 Health check: http://localhost:${PORT}/api/health`);
 });
 
 // Graceful shutdown

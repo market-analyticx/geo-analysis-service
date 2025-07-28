@@ -52,14 +52,24 @@ app.use('/api/analysis', auth, analysisRoutes);
 // Root endpoint
 app.get('/', (req, res) => {
   res.json({
-    service: 'LLM Brand Analysis Service',
+    service: 'Geo Analysis Service',
     version: '1.0.0',
+    description: 'Analyzes brands and saves OpenAI responses to text files',
     status: 'operational',
+    fileLocation: config.reportsDir,
     endpoints: {
-      health: '/api/health',
-      analysis: '/api/analysis (POST)',
-      reports: '/api/analysis/reports (GET)'
-    }
+      health: 'GET /api/health - Service health check',
+      analyze: 'POST /api/analysis - Analyze brand and save to file',
+      files: 'GET /api/analysis/files - List saved files',
+      download: 'GET /api/analysis/files/:fileName/download - Download file',
+      statistics: 'GET /api/analysis/statistics - Service stats',
+      help: 'GET /api/analysis/help - API documentation'
+    },
+    usage: {
+      authentication: 'Add header: Authorization: Bearer YOUR_API_KEY',
+      example: `curl -X POST http://localhost:${config.port}/api/analysis -H "Authorization: Bearer YOUR_KEY" -H "Content-Type: application/json" -d '{"brandName": "Apple"}'`
+    },
+    note: 'All analysis results are saved as text files in the reports directory'
   });
 });
 

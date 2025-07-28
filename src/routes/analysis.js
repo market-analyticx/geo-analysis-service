@@ -8,7 +8,7 @@ const router = express.Router();
 
 /**
  * POST /api/analysis
- * Analyze a brand's LLM visibility
+ * Analyze a brand and save to text file
  */
 router.post('/', validateBrandAnalysis, asyncHandler(async (req, res) => {
   const { brandName, includeHistory, priority, metadata } = req.body;
@@ -28,17 +28,29 @@ router.post('/', validateBrandAnalysis, asyncHandler(async (req, res) => {
     userAgent: req.get('User-Agent')
   });
 
-  res.json(result);
+  // Return simple response with file information
+  res.json({
+    success: true,
+    message: `Analysis completed for ${brandName}`,
+    result: {
+      brandName: result.brandName,
+      fileName: result.fileName,
+      filePath: result.filePath,
+      requestId: result.requestId,
+      tokensUsed: result.metadata.tokensUsed,
+      processingTime: result.metadata.processingTime,
+      createdAt: result.metadata.createdAt
+    }
+  });
 }));
 
 /**
- * GET /api/analysis/reports
- * Get list of all reports with optional filtering
+ * GET /api/analysis/files
+ * Get list of all saved files
  */
-router.get('/reports', asyncHandler(async (req, res) => {
+router.get('/files', asyncHandler(async (req, res) => {
   const {
     brandName,
-    success,
     fromDate,
     toDate,
     limit = 50,
@@ -47,55 +59,71 @@ router.get('/reports', asyncHandler(async (req, res) => {
 
   const filters = {};
   if (brandName) filters.brandName = brandName;
-  if (success !== undefined) filters.success = success === 'true';
   if (fromDate) filters.fromDate = fromDate;
   if (toDate) filters.toDate = toDate;
 
-  const allReports = await brandService.getAllReports(filters);
+  const allFiles = await brandService.getAllReports(filters);
   
   // Apply pagination
-  const reports = allReports.slice(parseInt(offset), parseInt(offset) + parseInt(limit));
+  const files = allFiles.slice(parseInt(offset), parseInt(offset) + parseInt(limit));
   
   res.json({
     success: true,
-    data: reports,
+    message: `Found ${allFiles.length} files`,
+    data: files,
     pagination: {
-      total: allReports.length,
+      total: allFiles.length,
       limit: parseInt(limit),
       offset: parseInt(offset),
-      hasMore: parseInt(offset) + parseInt(limit) < allReports.length
+      hasMore: parseInt(offset) + parseInt(limit) < allFiles.length
     }
   });
 }));
 
 /**
- * GET /api/analysis/reports/:requestId
- * Get specific report by request ID
+ * GET /api/analysis/files/:fileName
+ * Get specific file content
  */
-router.get('/reports/:requestId', asyncHandler(async (req, res) => {
-  const { requestId } = req.params;
+router.get('/files/:fileName', asyncHandler(async (req, res) => {
+  const { fileName } = req.params;
 
-  const report = await brandService.getReport(requestId);
+  const fileData = await brandService.getReport(fileName);
 
   res.json({
     success: true,
-    data: report
+    data: fileData
   });
 }));
 
 /**
- * DELETE /api/analysis/reports/:requestId
- * Delete specific report by request ID
+ * GET /api/analysis/files/:fileName/download
+ * Download specific file
  */
-router.delete('/reports/:requestId', asyncHandler(async (req, res) => {
-  const { requestId } = req.params;
+router.get('/files/:fileName/download', asyncHandler(async (req, res) => {
+  const { fileName } = req.params;
 
-  await brandService.deleteReport(requestId);
+  const fileData = await brandService.getReport(fileName);
+  
+  res.set({
+    'Content-Type': 'text/plain; charset=utf-8',
+    'Content-Disposition': `attachment; filename="${fileName}"`
+  });
+  
+  res.send(fileData.content);
+}));
+
+/**
+ * DELETE /api/analysis/files/:fileName
+ * Delete specific file
+ */
+router.delete('/files/:fileName', asyncHandler(async (req, res) => {
+  const { fileName } = req.params;
+
+  await brandService.deleteReport(fileName);
 
   res.json({
     success: true,
-    message: 'Report deleted successfully',
-    requestId
+    message: `File ${fileName} deleted successfully`
   });
 }));
 
@@ -108,13 +136,14 @@ router.get('/statistics', asyncHandler(async (req, res) => {
 
   res.json({
     success: true,
+    message: 'Service statistics',
     data: stats
   });
 }));
 
 /**
  * POST /api/analysis/bulk
- * Analyze multiple brands (for future enhancement)
+ * Analyze multiple brands and save each to file
  */
 router.post('/bulk', asyncHandler(async (req, res) => {
   const { brands } = req.body;
@@ -143,27 +172,92 @@ router.post('/bulk', asyncHandler(async (req, res) => {
         userAgent: req.get('User-Agent'),
         bulkRequest: true
       });
-      results.push(result);
+      
+      results.push({
+        brandName: result.brandName,
+        fileName: result.fileName,
+        requestId: result.requestId,
+        status: 'success'
+      });
     } catch (error) {
       errors.push({
         brandName,
-        error: error.message
+        error: error.message,
+        status: 'failed'
       });
     }
   }
 
   res.json({
     success: true,
+    message: `Bulk analysis completed: ${results.length} successful, ${errors.length} failed`,
     data: {
       successful: results,
       failed: errors,
       summary: {
         total: brands.length,
         successful: results.length,
-        failed: errors.length
+        failed: errors.length,
+        successRate: `${((results.length/brands.length)*100).toFixed(1)}%`
       }
     }
   });
 }));
+
+/**
+ * GET /api/analysis/help
+ * Show API usage help
+ */
+router.get('/help', (req, res) => {
+  res.json({
+    service: 'Geo Analysis Service',
+    description: 'Analyzes brands and saves results to text files',
+    endpoints: {
+      'POST /api/analysis': {
+        description: 'Analyze a brand and save to text file',
+        body: {
+          brandName: 'string (required)',
+          priority: 'string (optional): low|normal|high',
+          includeHistory: 'boolean (optional)'
+        }
+      },
+      'GET /api/analysis/files': {
+        description: 'List all saved analysis files',
+        query: {
+          brandName: 'string (optional): filter by brand name',
+          fromDate: 'date (optional): filter from date',
+          toDate: 'date (optional): filter to date',
+          limit: 'number (optional): max results (default: 50)',
+          offset: 'number (optional): skip results (default: 0)'
+        }
+      },
+      'GET /api/analysis/files/:fileName': {
+        description: 'Get content of specific file'
+      },
+      'GET /api/analysis/files/:fileName/download': {
+        description: 'Download specific file'
+      },
+      'DELETE /api/analysis/files/:fileName': {
+        description: 'Delete specific file'
+      },
+      'GET /api/analysis/statistics': {
+        description: 'Get service statistics'
+      },
+      'POST /api/analysis/bulk': {
+        description: 'Analyze multiple brands',
+        body: {
+          brands: 'array of strings (max 10 brands)'
+        }
+      }
+    },
+    authentication: 'Add Authorization header: Bearer YOUR_API_KEY',
+    fileLocation: './reports/',
+    examples: {
+      analyze: 'curl -X POST http://localhost:3000/api/analysis -H "Authorization: Bearer YOUR_KEY" -d \'{"brandName": "Apple"}\'',
+      listFiles: 'curl -H "Authorization: Bearer YOUR_KEY" http://localhost:3000/api/analysis/files',
+      downloadFile: 'curl -H "Authorization: Bearer YOUR_KEY" http://localhost:3000/api/analysis/files/filename.txt/download -o report.txt'
+    }
+  });
+});
 
 module.exports = router;
