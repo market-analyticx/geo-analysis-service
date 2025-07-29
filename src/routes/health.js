@@ -1,5 +1,5 @@
 const express = require('express');
-const openaiService = require('../services/openai.service');
+const claudeService = require('../services/claude.service');
 const brandService = require('../services/brand.service');
 const { asyncHandler } = require('../middleware/errorHandler');
 
@@ -13,7 +13,7 @@ router.get('/', asyncHandler(async (req, res) => {
     status: 'ok',
     service: 'Geo Analysis Service',
     version: '1.0.0',
-    description: 'Geographic Brand Visibility Analysis across LLMs',
+    description: 'Geographic Brand Visibility Analysis using Claude AI',
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
     environment: process.env.NODE_ENV || 'development'
@@ -27,15 +27,15 @@ router.get('/detailed', asyncHandler(async (req, res) => {
   const checks = {};
   let overallStatus = 'ok';
 
-  // Check OpenAI service
+  // Check Claude service
   try {
-    const openaiStatus = await openaiService.getStatus();
-    checks.openai = openaiStatus;
-    if (openaiStatus.status !== 'operational') {
+    const claudeStatus = await claudeService.getStatus();
+    checks.claude = claudeStatus;
+    if (claudeStatus.status !== 'operational') {
       overallStatus = 'degraded';
     }
   } catch (error) {
-    checks.openai = {
+    checks.claude = {
       status: 'error',
       error: error.message
     };
@@ -82,7 +82,7 @@ router.get('/detailed', asyncHandler(async (req, res) => {
     status: overallStatus,
     service: 'Geo Analysis Service',
     version: '1.0.0',
-    description: 'Geographic Brand Visibility Analysis across LLMs',
+    description: 'Geographic Brand Visibility Analysis using Claude AI',
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
     environment: process.env.NODE_ENV || 'development',

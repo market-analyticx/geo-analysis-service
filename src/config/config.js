@@ -7,12 +7,11 @@ const config = {
   nodeEnv: process.env.NODE_ENV || 'development',
   port: parseInt(process.env.PORT, 10) || 3000,
   
-  // OpenAI configuration
-  openai: {
-    apiKey: process.env.OPENAI_API_KEY,
-    model: process.env.OPENAI_MODEL || 'gpt-4-turbo-preview',
-    maxTokens: parseInt(process.env.OPENAI_MAX_TOKENS, 10) || 4000,
-    temperature: parseFloat(process.env.OPENAI_TEMPERATURE) || 0.7,
+  // Claude configuration
+  claude: {
+    apiKey: process.env.CLAUDE_API_KEY,
+    model: process.env.CLAUDE_MODEL || 'claude-3-5-sonnet-20241022',
+    maxTokens: parseInt(process.env.CLAUDE_MAX_TOKENS, 10) || 8000,
   },
   
   // API security
@@ -51,8 +50,8 @@ const createDirectories = () => {
 const validateConfig = () => {
   const errors = [];
   
-  if (!config.openai.apiKey) {
-    errors.push('OPENAI_API_KEY is required. Get it from https://platform.openai.com/api-keys');
+  if (!config.claude.apiKey) {
+    errors.push('CLAUDE_API_KEY is required. Get it from https://console.anthropic.com/');
   }
   
   if (!config.apiKey) {
@@ -63,12 +62,21 @@ const validateConfig = () => {
     errors.push('API_KEY should be at least 32 characters long for security');
   }
   
-  if (config.openai.maxTokens > 8192) {
-    errors.push('OPENAI_MAX_TOKENS cannot exceed 8192 tokens');
+  if (config.claude.maxTokens > 8192) {
+    errors.push('CLAUDE_MAX_TOKENS cannot exceed 8192 tokens');
   }
   
-  if (config.openai.temperature < 0 || config.openai.temperature > 2) {
-    errors.push('OPENAI_TEMPERATURE must be between 0 and 2');
+  // Validate Claude model
+  const validModels = [
+    'claude-3-5-sonnet-20241022',
+    'claude-3-5-haiku-20241022',
+    'claude-3-opus-20240229',
+    'claude-3-sonnet-20240229',
+    'claude-3-haiku-20240307'
+  ];
+  
+  if (!validModels.includes(config.claude.model)) {
+    errors.push(`CLAUDE_MODEL must be one of: ${validModels.join(', ')}`);
   }
   
   if (errors.length > 0) {

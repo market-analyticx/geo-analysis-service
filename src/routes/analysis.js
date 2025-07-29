@@ -28,7 +28,7 @@ router.post('/', validateBrandAnalysis, asyncHandler(async (req, res) => {
     userAgent: req.get('User-Agent')
   });
 
-  // Return simple response with file information
+  // Return comprehensive response with quality metrics
   res.json({
     success: true,
     message: `Analysis completed for ${brandName}`,
@@ -38,8 +38,17 @@ router.post('/', validateBrandAnalysis, asyncHandler(async (req, res) => {
       filePath: result.filePath,
       requestId: result.requestId,
       tokensUsed: result.metadata.tokensUsed,
+      inputTokens: result.metadata.inputTokens,
+      outputTokens: result.metadata.outputTokens,
       processingTime: result.metadata.processingTime,
-      createdAt: result.metadata.createdAt
+      createdAt: result.metadata.createdAt,
+      model: result.metadata.model,
+      responseQuality: {
+        enhanced: result.metadata.enhancedResponse,
+        responseLength: result.metadata.responseLength,
+        qualityLevel: result.metadata.responseLength > 5000 ? 'COMPREHENSIVE' : 'STANDARD',
+        wordCount: Math.round(result.metadata.responseLength / 5) // Approximate word count
+      }
     }
   });
 }));
@@ -211,7 +220,8 @@ router.post('/bulk', asyncHandler(async (req, res) => {
 router.get('/help', (req, res) => {
   res.json({
     service: 'Geo Analysis Service',
-    description: 'Analyzes brands and saves results to text files',
+    description: 'Analyzes brands using Claude AI and saves results to text files',
+    aiProvider: 'Anthropic Claude',
     endpoints: {
       'POST /api/analysis': {
         description: 'Analyze a brand and save to text file',

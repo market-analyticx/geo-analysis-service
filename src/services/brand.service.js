@@ -1,5 +1,5 @@
 const { v4: uuidv4 } = require('uuid');
-const openaiService = require('./openai.service');
+const claudeService = require('./claude.service');
 const fileService = require('./file.service');
 const config = require('../config/config');
 const logger = require('../utils/logger');
@@ -40,8 +40,8 @@ class BrandService {
     });
 
     try {
-      // Perform OpenAI analysis
-      const analysisResult = await openaiService.analyzeBrand(brandName, options);
+      // Perform Claude analysis
+      const analysisResult = await claudeService.analyzeBrand(brandName, options);
       
       // Prepare metadata
       const metadata = {
@@ -75,6 +75,8 @@ class BrandService {
         fileName: filePath.split('/').pop(),
         metadata: {
           tokensUsed: metadata.tokensUsed,
+          inputTokens: metadata.inputTokens,
+          outputTokens: metadata.outputTokens,
           processingTime: metadata.totalProcessingTime,
           createdAt: metadata.createdAt,
           model: metadata.model

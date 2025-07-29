@@ -18,14 +18,13 @@ const errorHandler = (err, req, res, next) => {
   let message = err.message;
   let errorDetails = {};
 
-  // OpenAI API errors
-  if (err.name === 'OpenAIError' || err.type === 'invalid_request_error') {
+  // Claude API errors
+  if (err.message && err.message.includes('Claude API')) {
     statusCode = 400;
-    message = 'OpenAI API error: ' + err.message;
+    message = err.message;
     errorDetails = {
-      type: 'openai_error',
-      code: err.code,
-      param: err.param
+      type: 'claude_error',
+      provider: 'anthropic'
     };
   }
   
@@ -45,6 +44,17 @@ const errorHandler = (err, req, res, next) => {
     errorDetails = {
       type: 'network_error',
       code: err.code
+    };
+  }
+
+  // Authentication errors
+  if (err.status === 401 || err.message.includes('API key')) {
+    statusCode = 401;
+    if (err.message.includes('Claude')) {
+      message = 'Claude API authentication failed. Please check your API key.';
+    }
+    errorDetails = {
+      type: 'auth_error'
     };
   }
 

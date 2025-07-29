@@ -54,7 +54,8 @@ app.get('/', (req, res) => {
   res.json({
     service: 'Geo Analysis Service',
     version: '1.0.0',
-    description: 'Analyzes brands and saves OpenAI responses to text files',
+    description: 'Analyzes brands using Claude AI and saves responses to text files',
+    aiProvider: 'Anthropic Claude',
     status: 'operational',
     fileLocation: config.reportsDir,
     endpoints: {
