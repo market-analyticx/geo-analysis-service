@@ -11,7 +11,7 @@ class ClaudeService {
   }
 
   /**
-   * Analyze brand visibility using Claude with enhanced detail requirements
+   * Analyze brand using Claude with maximum detail optimization
    * @param {string} brandName - Brand name to analyze
    * @param {Object} options - Analysis options
    * @returns {Promise<Object>} Analysis result
@@ -20,153 +20,157 @@ class ClaudeService {
     const startTime = Date.now();
     
     try {
-      logger.info(`Starting Claude analysis for brand: ${brandName}`);
+      logger.info(`Starting comprehensive Claude analysis for brand: ${brandName}`, {
+        model: config.claude.model,
+        maxTokens: config.claude.maxTokens,
+        inputLimit: config.claude.inputLimit
+      });
 
-      // Create the analysis prompt
-      const prompt = createBrandAnalysisPrompt(brandName);
+      const prompt = createBrandAnalysisPrompt(brandName, options.websiteUrl);
 
-      // Enhanced system prompt that demands complete response
-      const systemPrompt = `You are a senior partner at McKinsey & Company delivering a comprehensive brand strategy analysis. This is a single, complete deliverable - NOT a multi-part series.
+      // Log prompt length for monitoring
+      logger.info(`Prompt length: ${prompt.length} characters`, {
+        estimatedTokens: Math.ceil(prompt.length / 4), // Rough estimate
+        maxInputTokens: config.claude.inputLimit
+      });
 
-CRITICAL ENGAGEMENT RULES:
-- You MUST complete the entire analysis in one comprehensive response
-- DO NOT suggest "continued in part 2" or split the analysis
-- DO NOT ask if the client wants you to continue - they expect the complete analysis
-- This is a $75,000 consulting engagement that requires a complete, professional deliverable
-- Provide the full analysis from start to finish in one response
-
-RESPONSE REQUIREMENTS:
-- Complete all sections in one comprehensive response
-- Minimum 4000 words total
-- Include Executive Summary, detailed analysis, recommendations, and implementation plan
-- Write as if this is the final, complete consulting report
-- End with conclusions, not continuation requests
-
-ANALYTICAL APPROACH:
-- Use available knowledge about the industry and company type
-- Provide detailed strategic frameworks and analysis
-- When specific current data isn't available, state this briefly then proceed with industry-based analysis
-- Focus on delivering actionable strategic value
-
-You are delivering the complete analysis now - not a preview or first part.`;
-
-      // Call Claude API with enhanced parameters for longer responses
+      // Primary request with maximum tokens for comprehensive analysis
       const response = await this.client.messages.create({
         model: config.claude.model,
-        max_tokens: config.claude.maxTokens,
-        temperature: 0.7, // Add some creativity for more comprehensive responses
+        max_tokens: config.claude.maxTokens, // Use full token allocation
+        temperature: 0.05, // Very low for maximum consistency and detail
         messages: [
           {
             role: 'user',
-            content: [
-              {
-                type: 'text',
-                text: `${systemPrompt}
-
-${prompt}
-
-CRITICAL: This must be a complete, comprehensive analysis delivered in one response. Do not suggest continuation or split this into parts. The client expects the full strategic analysis with all sections completed now.
-
-Deliver the complete consulting report including:
-1. Executive Summary (complete)
-2. Brand Intelligence Analysis (complete)
-3. Customer Profile Development (complete)  
-4. AI Platform Visibility Assessment (complete)
-5. Strategic Recommendations (complete)
-6. Implementation Roadmap (complete)
-7. Conclusions and Next Steps (complete)
-
-Begin the complete analysis now - this is the final deliverable:`
-              }
-            ]
+            content: prompt
           }
         ],
       });
 
       let analysis = response.content[0].text;
-      let totalTokens = response.usage.input_tokens + response.usage.output_tokens;
       let totalInputTokens = response.usage.input_tokens;
       let totalOutputTokens = response.usage.output_tokens;
+      let totalTokens = totalInputTokens + totalOutputTokens;
+      
+      const processingTime = Date.now() - startTime;
 
-      // Check if response is incomplete (contains continuation language or is too brief)
-      if (analysis.length < 3000 || 
-          analysis.includes('Continued in Part') || 
-          analysis.includes('[Note: I can continue') ||
-          analysis.includes('Would you like me to proceed') ||
-          response.stop_reason === 'max_tokens') {
-        
-        logger.info(`Response incomplete (${analysis.length} chars), demanding complete analysis...`);
-        
+      // Check if we hit the token limit and response was truncated
+      const wasIncomplete = response.stop_reason === 'max_tokens' && 
+                           analysis.length > 0 && 
+                           !analysis.includes('## Implementation Roadmap');
+
+      if (wasIncomplete) {
+        logger.warn(`Response may be incomplete due to token limit`, {
+          stopReason: response.stop_reason,
+          outputTokens: totalOutputTokens,
+          maxTokens: config.claude.maxTokens,
+          responseLength: analysis.length
+        });
+
+        // Attempt to get a continuation if we hit the limit
         try {
-          // Demand complete analysis without continuation prompts
-          const completeResponse = await this.client.messages.create({
+          logger.info('Requesting ultra-comprehensive analysis...');
+          
+          const continuationResponse = await this.client.messages.create({
             model: config.claude.model,
-            max_tokens: config.claude.maxTokens,
+            max_tokens: config.claude.maxTokens, // Use full allocation again
+            temperature: 0.1,
             messages: [
               {
                 role: 'user',
-                content: `You are a McKinsey partner delivering a complete consulting report for ${brandName}. 
+                content: `You are a Master AI/LLM Visibility Research Analyst. Your previous response was insufficient - only ${totalOutputTokens} tokens out of 8,192 available.
 
-CRITICAL: The client has paid $75,000 for a COMPLETE analysis, not a partial response or multi-part series.
+The client has paid $50,000 for a COMPREHENSIVE brand visibility audit for ${brandName}${options.websiteUrl ? ` (${options.websiteUrl})` : ''} and expects a detailed professional deliverable.
 
-Your previous response was incomplete: "${analysis.substring(0, 200)}..."
+CRITICAL REQUIREMENTS:
+- Use ALL 8,192 output tokens available
+- Provide 6,000-8,000 words of detailed analysis
+- Include exhaustive detail in every section
+- Each major section should be 800-1,200 words minimum
 
-The client is dissatisfied and demands the complete consulting deliverable NOW. Provide the full comprehensive analysis including:
+REQUIRED COMPREHENSIVE ANALYSIS:
 
-1. **Executive Summary** (complete strategic overview)
-2. **Detailed Brand Intelligence** (comprehensive market analysis)  
-3. **Customer Profile Analysis** (detailed ICP development)
-4. **AI Platform Visibility Assessment** (platform-by-platform analysis)
-5. **Strategic Recommendations** (specific actionable plans)
-6. **Implementation Roadmap** (detailed timeline and metrics)
-7. **Final Conclusions** (strategic priorities and next steps)
+1. EXTENSIVE Brand Intelligence (1,500+ words)
+   - Complete service portfolio analysis
+   - Detailed client portfolio assessment
+   - Comprehensive market positioning
+   - Full competitive landscape mapping
 
-DO NOT ask if you should continue. DO NOT suggest this is "Part 1" of anything. 
-Deliver the COMPLETE strategic analysis that justifies the consulting fee.
+2. DETAILED ICP Development (1,200+ words)
+   - Multiple comprehensive customer personas
+   - Extensive demographic and firmographic data
+   - Detailed pain points and challenges
+   - Complete search behavior analysis
 
-Write the full report now:`
+3. COMPREHENSIVE AI Visibility Audit (2,000+ words)
+   - Platform-by-platform detailed analysis
+   - Extensive competitive share of voice
+   - Complete content source coverage
+   - Geographic and market-specific findings
+
+4. STRATEGIC Recommendations (1,500+ words)
+   - Immediate actions with detailed implementation
+   - Medium-term strategy with specific tactics
+   - Long-term vision with comprehensive roadmap
+   - Resource allocation and budget considerations
+
+5. DETAILED Implementation Plan (1,000+ words)
+   - Month-by-month breakdown
+   - Specific deliverables and milestones
+   - Success metrics and KPIs
+   - Risk mitigation strategies
+
+Provide the COMPLETE analysis using ALL available tokens. This must be a premium consulting deliverable with maximum depth and value.`
               }
             ],
           });
 
-          // Replace with the complete response
-          analysis = completeResponse.content[0].text;
-          totalTokens = completeResponse.usage.input_tokens + completeResponse.usage.output_tokens;
-          totalInputTokens = completeResponse.usage.input_tokens;
-          totalOutputTokens = completeResponse.usage.output_tokens;
+          // Use the new comprehensive response
+          analysis = continuationResponse.content[0].text;
+          totalInputTokens = continuationResponse.usage.input_tokens;
+          totalOutputTokens = continuationResponse.usage.output_tokens;
+          totalTokens = totalInputTokens + totalOutputTokens;
 
-          logger.info(`Complete response received, length: ${analysis.length} characters`);
-        } catch (completeError) {
-          logger.warn(`Failed to get complete response: ${completeError.message}`);
-          // Continue with the original response
+          logger.info(`Comprehensive response obtained`, {
+            newLength: analysis.length,
+            outputTokens: totalOutputTokens,
+            totalTokens: totalTokens
+          });
+
+        } catch (continuationError) {
+          logger.warn(`Continuation request failed: ${continuationError.message}`);
+          // Continue with original response
         }
       }
 
-      const processingTime = Date.now() - startTime;
-
-      logger.info(`Claude analysis completed for brand: ${brandName}`, {
+      logger.info(`Claude analysis completed successfully`, {
+        brandName,
+        model: config.claude.model,
         tokensUsed: totalTokens,
         inputTokens: totalInputTokens,
         outputTokens: totalOutputTokens,
         processingTime,
         responseLength: analysis.length,
-        model: config.claude.model
+        stopReason: response.stop_reason,
+        tokensUtilization: `${((totalOutputTokens / config.claude.maxTokens) * 100).toFixed(1)}%`
       });
 
       return {
         analysis,
         metadata: {
           model: config.claude.model,
+          modelDescription: config.claude.description,
           tokensUsed: totalTokens,
           inputTokens: totalInputTokens,
           outputTokens: totalOutputTokens,
+          maxTokensAvailable: config.claude.maxTokens,
+          tokensUtilization: ((totalOutputTokens / config.claude.maxTokens) * 100).toFixed(1) + '%',
           processingTime,
           timestamp: new Date().toISOString(),
-          promptLength: prompt.length,
           responseLength: analysis.length,
-          apiVersion: response.model,
           stopReason: response.stop_reason,
-          enhancedResponse: analysis.length > 5000 // Flag for detailed responses
+          wasOptimizedForMaxDetail: true,
+          promptLength: prompt.length
         }
       };
 
@@ -174,24 +178,22 @@ Write the full report now:`
       logger.error(`Claude analysis failed for brand: ${brandName}`, {
         error: error.message,
         type: error.constructor.name,
+        status: error.status,
         processingTime: Date.now() - startTime
       });
 
-      // Handle specific Claude API errors
+      // Enhanced error handling for Tier 2 limits
       if (error.status === 429) {
-        throw new Error('Claude API rate limit exceeded. Please try again later.');
+        const retryAfter = error.headers?.['retry-after'] || 60;
+        throw new Error(`Claude API rate limit exceeded. Retry after ${retryAfter} seconds. Your Tier 2 limits: ${config.claude.rateLimits.requestsPerMinute} requests/min, ${config.claude.rateLimits.outputTokensPerMinute} output tokens/min.`);
       }
       
       if (error.status === 401) {
-        throw new Error('Claude API key is invalid or expired.');
+        throw new Error('Claude API key is invalid or expired. Please check your API key in the Anthropic Console.');
       }
       
-      if (error.status === 403) {
-        throw new Error('Claude API access forbidden. Check your API key permissions.');
-      }
-
       if (error.status === 400) {
-        throw new Error(`Claude API bad request: ${error.message}`);
+        throw new Error(`Claude API bad request: ${error.message}. Check if your request exceeds input token limits (${config.claude.inputLimit} tokens/min for ${config.claude.model}).`);
       }
 
       if (error.status === 500) {
@@ -203,55 +205,61 @@ Write the full report now:`
   }
 
   /**
-   * Get Claude service status
-   * @returns {Promise<Object>} Service status
+   * Get Claude service status with Tier 2 information
    */
   async getStatus() {
     try {
-      // Test with a simple message to verify API connectivity
+      const testStart = Date.now();
       const response = await this.client.messages.create({
         model: config.claude.model,
-        max_tokens: 10,
+        max_tokens: 50,
         messages: [
           {
             role: 'user',
-            content: 'Hello'
+            content: 'Service status check - respond with "operational"'
           }
         ]
       });
 
+      const responseTime = Date.now() - testStart;
+
       return {
         status: 'operational',
         model: config.claude.model,
+        modelDescription: config.claude.description,
         maxTokens: config.claude.maxTokens,
+        inputLimit: config.claude.inputLimit,
+        tier: 'Tier 2',
+        rateLimits: config.claude.rateLimits,
+        responseTime: `${responseTime}ms`,
         lastChecked: new Date().toISOString(),
-        responseTime: response.usage ? 'normal' : 'unknown'
+        testResponse: response.content[0].text
       };
     } catch (error) {
-      logger.error('Claude status check failed', {
-        error: error.message,
-        status: error.status
-      });
-
       return {
         status: 'error',
         error: error.message,
+        model: config.claude.model,
         lastChecked: new Date().toISOString()
       };
     }
   }
 
   /**
-   * Validate API key and configuration
-   * @returns {Promise<boolean>} Validation result
+   * Get detailed model information
    */
-  async validateConfiguration() {
-    try {
-      await this.getStatus();
-      return true;
-    } catch (error) {
-      return false;
-    }
+  getModelInfo() {
+    return {
+      current: {
+        model: config.claude.model,
+        description: config.claude.description,
+        maxTokens: config.claude.maxTokens,
+        inputLimit: config.claude.inputLimit
+      },
+      available: config.availableModels,
+      tier: 'Tier 2',
+      rateLimits: config.claude.rateLimits
+    };
   }
 }
 

@@ -1,35 +1,34 @@
 require('dotenv').config();
 const fs = require('fs');
-const path = require('path');
 
 const config = {
   // Server configuration
   nodeEnv: process.env.NODE_ENV || 'development',
   port: parseInt(process.env.PORT, 10) || 3000,
   
-  // Claude configuration
+  // Claude configuration - CORRECTED TOKEN LIMITS
   claude: {
     apiKey: process.env.CLAUDE_API_KEY,
     model: process.env.CLAUDE_MODEL || 'claude-3-5-sonnet-20241022',
-    maxTokens: parseInt(process.env.CLAUDE_MAX_TOKENS, 10) || 8000,
+    maxTokens: 8192, // CORRECT: Maximum for Claude Sonnet 3.5 is 8192
   },
   
   // API security
   apiKey: process.env.API_KEY,
   
-  // Rate limiting
-  rateLimitWindowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS, 10) || 900000, // 15 minutes
-  rateLimitMaxRequests: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS, 10) || 10,
+  // Rate limiting - Tier 2 optimized
+  rateLimitWindowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS, 10) || 3600000, // 1 hour
+  rateLimitMaxRequests: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS, 10) || 50, // Increased for Tier 2
   
   // Logging
   logLevel: process.env.LOG_LEVEL || 'info',
   
-  // File storage
+  // Storage
   reportsDir: process.env.REPORTS_DIR || './reports',
   logsDir: process.env.LOGS_DIR || './logs',
 };
 
-// Create necessary directories
+// Create directories
 const createDirectories = () => {
   const dirs = [config.reportsDir, config.logsDir];
   
@@ -46,43 +45,26 @@ const createDirectories = () => {
   });
 };
 
-// Validation with better error messages
+// Validation
 const validateConfig = () => {
   const errors = [];
   
   if (!config.claude.apiKey) {
-    errors.push('CLAUDE_API_KEY is required. Get it from https://console.anthropic.com/');
+    errors.push('CLAUDE_API_KEY is required');
   }
   
   if (!config.apiKey) {
-    errors.push('API_KEY is required. Set a secure API key for your service authentication');
+    errors.push('API_KEY is required');
   }
   
-  if (config.apiKey && config.apiKey.length < 32) {
-    errors.push('API_KEY should be at least 32 characters long for security');
-  }
-  
-  if (config.claude.maxTokens > 8192) {
-    errors.push('CLAUDE_MAX_TOKENS cannot exceed 8192 tokens');
-  }
-  
-  // Validate Claude model
-  const validModels = [
-    'claude-3-5-sonnet-20241022',
-    'claude-3-5-haiku-20241022',
-    'claude-3-opus-20240229',
-    'claude-3-sonnet-20240229',
-    'claude-3-haiku-20240307'
-  ];
-  
-  if (!validModels.includes(config.claude.model)) {
-    errors.push(`CLAUDE_MODEL must be one of: ${validModels.join(', ')}`);
+  if (config.apiKey && config.apiKey.length < 16) {
+    errors.push('API_KEY should be at least 16 characters long');
   }
   
   if (errors.length > 0) {
     console.error('❌ Configuration errors:');
     errors.forEach(error => console.error(`   - ${error}`));
-    console.error('\nPlease check your .env file and fix the issues above.');
+    console.error('\nPlease check your .env file.');
     process.exit(1);
   }
 };
@@ -91,6 +73,9 @@ const validateConfig = () => {
 createDirectories();
 validateConfig();
 
-console.log('✅ Configuration validated successfully');
+console.log('✅ Configuration loaded successfully');
+console.log(`🤖 Model: ${config.claude.model}`);
+console.log(`🎯 Max output tokens: ${config.claude.maxTokens.toLocaleString()}`);
+console.log(`⚡ Rate limit: ${config.rateLimitMaxRequests} requests/hour`);
 
 module.exports = config;

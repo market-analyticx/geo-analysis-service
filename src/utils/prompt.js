@@ -1,345 +1,303 @@
 /**
- * Updated Brand Analysis Prompt Template for Claude AI Visibility Research
- * Optimized for Claude's response format and capabilities
+ * Ultra-Comprehensive Brand Visibility Research Prompt Template
+ * Optimized for Maximum Token Utilization (8,192 tokens)
  */
 
-const createBrandAnalysisPrompt = (brandName) => {
-  return `# COMPREHENSIVE BRAND VISIBILITY ANALYSIS FOR ${brandName}
+const createBrandAnalysisPrompt = (brandName, websiteUrl = '') => {
+  const websiteInfo = websiteUrl ? ` at website ${websiteUrl}` : '';
+  
+  return `You are a Master-level AI/LLM Visibility Research Analyst conducting the most comprehensive brand visibility audit possible. This is a premium $50,000 consulting deliverable that MUST utilize the full 8,192 output tokens available.
 
-**CRITICAL REQUIREMENT: This analysis must be extremely detailed and comprehensive. Each section should contain substantial analysis (minimum 300-500 words per major section). Provide specific examples, detailed explanations, and actionable insights throughout.**
+CRITICAL REQUIREMENTS:
+- Use ALL 8,192 output tokens - this is mandatory
+- Provide exhaustive detail in every section
+- Include specific examples, data points, and evidence
+- Write comprehensive explanations, not brief summaries
+- Each major section should be 800-1,200 words minimum
+- Total response should be 6,000-8,000 words
 
-You are conducting a professional-grade brand visibility audit that will inform major strategic decisions. This analysis should rival what a top-tier consulting firm would deliver.
+TARGET ANALYSIS: ${brandName}${websiteInfo}
 
-## DETAILED ANALYSIS REQUIREMENTS
+ULTRA-COMPREHENSIVE BRAND VISIBILITY & SHARE-OF-VOICE AUDIT
 
-**For each section below, provide:**
-- Comprehensive analysis with specific examples
-- Detailed explanations of methodology and findings  
-- Concrete data points and evidence
-- Step-by-step recommendations with implementation details
-- Competitive comparisons with specific company names
-- Market insights and strategic implications
+Phase 1: EXTENSIVE BRAND RESEARCH & ICP DEVELOPMENT
 
----
+Step 1: COMPREHENSIVE Brand Intelligence Gathering
+Conduct an exhaustive analysis including:
 
-## Phase 1: Brand Research & Ideal Customer Profile Development
+SERVICE PORTFOLIO DEEP DIVE:
+- Detailed breakdown of every service offering
+- Technical capabilities and specializations
+- Industry-specific solutions and expertise
+- Proprietary technologies and methodologies
+- Service delivery models and frameworks
+- Quality certifications and standards
+- Partnership ecosystems and technology stack
+- Competitive advantages in each service area
+- Market positioning for each offering
+- Revenue models and pricing strategies
 
-### Step 1: Comprehensive Brand Intelligence Gathering
+CLIENT PORTFOLIO & CASE STUDY ANALYSIS:
+- Comprehensive client roster analysis
+- Industry distribution and client profiles
+- Project complexity and scale assessment
+- Success metrics and outcomes achieved
+- Client testimonials and feedback patterns
+- Retention rates and long-term relationships
+- Geographic distribution of clients
+- Client company size and market segments
+- Project duration and engagement models
+- Referral patterns and client advocacy
 
-**Conduct thorough research on ${brandName} including:**
+MARKET POSITIONING ASSESSMENT:
+- Detailed competitive landscape mapping
+- Market share analysis by service area
+- Brand perception across different segments
+- Pricing positioning relative to competitors
+- Geographic market presence and strength
+- Industry recognition and awards
+- Media coverage and thought leadership
+- Digital presence and online authority
+- Partner ecosystem and alliances
+- Innovation leadership and R&D focus
 
-**Service Portfolio Analysis:**
-- Detailed breakdown of all core services and capabilities
-- Analysis of service positioning and market differentiation
-- Evaluation of service portfolio breadth and depth
-- Assessment of competitive advantages in each service area
-- Identification of unique value propositions and specializations
+CONTENT & THOUGHT LEADERSHIP AUDIT:
+- Complete content inventory and analysis
+- Blog content themes and frequency
+- White papers and research publications
+- Speaking engagements and conference presence
+- Webinar series and educational content
+- Social media presence and engagement
+- Industry publication contributions
+- Expert positioning and media quotes
+- Technical documentation quality
+- Developer resources and community content
 
-**Market Positioning Assessment:**
-- Current brand positioning in the marketplace
-- Target market segments and customer bases
-- Competitive landscape analysis with specific competitor identification
-- Market share estimations and competitive positioning
-- Brand perception analysis across different market segments
+Step 2: DETAILED Ideal Customer Profile (ICP) Creation
 
-**Content and Thought Leadership Audit:**
-- Analysis of existing content strategy and execution
-- Thought leadership presence across various channels
-- Speaking engagements, publications, and industry recognition
-- Social media presence and engagement metrics
-- Industry awards, certifications, and recognition
+Develop 2-3 comprehensive ICPs with extensive detail:
 
-**Client Portfolio and Case Study Analysis:**
-- Review of publicly available client case studies
-- Analysis of client testimonials and success stories
-- Identification of client patterns and preferred industries
-- Assessment of project types and complexity levels
-- Evaluation of client satisfaction and retention indicators
+PRIMARY ICP - [Define specific persona]:
+DEMOGRAPHIC PROFILE:
+- Exact job titles and reporting structures
+- Years of experience and career progression
+- Educational background and certifications
+- Industry experience and specializations
+- Geographic location and market focus
+- Budget authority and decision-making power
+- Technology adoption patterns
+- Communication preferences and channels
 
-### Step 2: Detailed Ideal Customer Profile (ICP) Development
+COMPANY PROFILE:
+- Revenue ranges and growth trajectories
+- Employee count and organizational structure
+- Industry vertical and sub-segments
+- Technology stack and infrastructure
+- Digital maturity and transformation stage
+- Competitive landscape and market position
+- Regulatory environment and compliance needs
+- Innovation priorities and investment areas
 
-**Primary ICP - Comprehensive Profile:**
-
-**Demographics and Firmographics:**
-- Specific role titles and reporting structures
-- Company size ranges (revenue, employees, market cap)
-- Industry verticals with detailed sub-segments
-- Geographic markets and regional preferences
-- Technology adoption patterns and digital maturity levels
-
-**Psychographics and Behavioral Patterns:**
-- Decision-making processes and approval hierarchies
-- Budget allocation patterns and procurement processes
-- Information consumption habits and preferred channels
-- Technology adoption timeline and innovation approach
-- Risk tolerance and vendor evaluation criteria
-
-**Pain Points and Challenges (Detailed Analysis):**
-- Primary business challenges with root cause analysis
-- Operational inefficiencies and process gaps
-- Technology limitations and infrastructure constraints
+PAIN POINTS & CHALLENGES:
+- Primary business challenges and root causes
+- Technology limitations and infrastructure gaps
+- Skills shortages and capability needs
 - Market pressures and competitive threats
-- Regulatory or compliance requirements
+- Budget constraints and resource limitations
+- Timeline pressures and delivery requirements
+- Risk factors and mitigation needs
+- Change management and adoption challenges
 
-**Search and Evaluation Behavior:**
-- How they discover and evaluate solution providers
-- Information sources and research methodologies
-- AI platform usage patterns and query types
-- Decision criteria and evaluation frameworks
-- Vendor selection and procurement processes
+SEARCH BEHAVIOR & AI PLATFORM USAGE:
+- Query patterns and search terminology
+- Information consumption habits
+- Decision-making processes and criteria
+- Vendor evaluation methodologies
+- Budget approval processes
+- Implementation timeline considerations
+- Success metrics and KPI expectations
+- Risk tolerance and innovation appetite
 
-**Secondary ICP (If Applicable):**
-[Repeat the same detailed analysis structure for secondary persona]
+[Repeat this comprehensive structure for SECONDARY and TERTIARY ICPs]
 
-### Step 3: Strategic Topic Identification and Analysis
+Step 3: STRATEGIC Topic Identification
 
-**Topic 1: [Primary Service Area]**
-- Detailed market analysis and opportunity sizing
-- Competitive landscape and key players
-- Customer pain points and solution requirements
-- ${brandName}'s competitive positioning and advantages
-- Market trends and future opportunities
-- Specific AI query patterns and search behaviors
+Identify 3-4 core topics with extensive analysis:
 
-**Topic 2: [Secondary Service Area]**
-[Repeat detailed analysis structure]
+TOPIC 1: [Primary Service Area]
+- Market size and growth projections
+- Competitive dynamics and key players
+- Technology trends and innovations
+- Customer needs and pain points
+- Solution requirements and specifications
+- Implementation challenges and considerations
+- Success factors and best practices
+- Pricing models and value propositions
+- Geographic variations and preferences
+- Regulatory considerations and compliance
 
-**Topic 3: [Tertiary Service Area]**
-[Repeat detailed analysis structure]
+[Repeat comprehensive analysis for Topics 2, 3, and 4]
 
----
+Phase 2: REALISTIC PROMPT DEVELOPMENT & TESTING
 
-## Phase 2: Realistic Prompt Development and Testing
+Step 4: EXTENSIVE Prompt Creation & Analysis
 
-### Step 4: Comprehensive Prompt Strategy Development
+For each topic, develop 3-4 realistic prompts with detailed context:
 
-**For each identified topic, develop multiple realistic prompts that represent:**
+BUSINESS SCENARIO PROMPTS:
+1. "I'm a [specific role] at a [company type] with [specific challenge]. We have [budget/timeline] and need [detailed requirements]. Our current constraints include [limitations]. What companies should we consider and why? Please provide detailed comparisons."
 
-**Business Context Scenarios:**
-- Urgent business needs requiring immediate solutions
-- Strategic planning and long-term capability building
-- Problem-solving for specific operational challenges
-- Competitive response and market positioning needs
+2. "Our [company size] [industry] company is planning [specific initiative] over [timeframe]. We need partners who can [specific capabilities] while ensuring [requirements]. Who are the top providers and what are their strengths?"
 
-**Prompt Examples with Detailed Context:**
+3. "We're evaluating [solution type] for our [use case]. Our technical requirements include [specifications] and we need [compliance/certifications]. Which companies have the best track record and expertise?"
 
-**Topic 1 Prompts:**
-1. **Urgent Business Need Scenario:**
-   - "I'm a [specific role] at a [company type] facing [specific challenge]. We need [detailed requirements] within [timeframe]. Our constraints include [specific limitations]. What companies would you recommend and why?"
+[Continue with extensive prompt development for each topic]
 
-2. **Strategic Planning Scenario:**
-   - "We're a [company description] planning [specific initiative] over the next [timeframe]. We're evaluating [specific capabilities] and need partners who can [detailed requirements]. Who should we consider?"
+Phase 3: COMPREHENSIVE AI VISIBILITY AUDIT
 
-**Topic 2 Prompts:**
-[Develop similar detailed, contextual prompts]
+DETAILED Brand Mentions Analysis:
 
-**Topic 3 Prompts:**
-[Develop similar detailed, contextual prompts]
+PLATFORM-BY-PLATFORM ASSESSMENT:
 
----
+ChatGPT Analysis:
+- Mention frequency across different query types
+- Context quality and accuracy assessment
+- Positioning relative to competitors
+- Recommendation scenarios and conditions
+- Technical accuracy of descriptions
+- Market positioning representation
+- Geographic mention patterns
+- Industry-specific visibility
+- Query complexity correlation
+- Response consistency analysis
 
-## Phase 3: Comprehensive AI Visibility Audit
+Google Bard/Gemini Analysis:
+[Repeat comprehensive analysis structure]
 
-### Brand Mention Analysis Across All Major LLM Platforms
+Claude Analysis:
+[Repeat comprehensive analysis structure]
 
-**Direct Brand Mentions - Detailed Assessment:**
+Perplexity Analysis:
+[Repeat comprehensive analysis structure]
 
-**Mention Frequency Analysis:**
-- Exact percentage of prompts generating ${brandName} mentions
-- Comparison across different prompt types and contexts
-- Variation in mention rates across different AI platforms
-- Correlation between prompt complexity and mention likelihood
-- Analysis of mention consistency across similar queries
+Other AI Platforms:
+[Continue with additional platforms]
 
-**Mention Context Quality Evaluation:**
-- Detailed assessment of context appropriateness
-- Analysis of surrounding companies and competitive context
-- Evaluation of positioning accuracy and relevance
-- Assessment of mention placement (first, middle, end of recommendations)
-- Quality of descriptive language and characterization
+COMPETITIVE SHARE OF VOICE ANALYSIS:
 
-**Recommendation Strength Analysis:**
-- Frequency of active recommendations vs. passive mentions
-- Analysis of recommendation language strength and enthusiasm
-- Comparison of recommendation context with competitors
-- Assessment of qualification criteria mentioned
-- Evaluation of implementation guidance provided
+Direct Competitor Assessment:
+For each major competitor, provide:
+- Mention frequency comparison
+- Context quality evaluation
+- Positioning strength analysis
+- Unique value proposition representation
+- Market share of voice calculation
+- Geographic presence comparison
+- Service area visibility comparison
+- Client testimonial integration
+- Thought leadership presence
+- Technical expertise recognition
 
-### Comprehensive Share of Voice Analysis
+CONTENT SOURCE COVERAGE ANALYSIS:
 
-**Competitive Benchmark Analysis:**
+Digital Footprint Assessment:
+- Website content indexing and recognition
+- Blog content citation frequency
+- Case study visibility and impact
+- White paper and research citations
+- Social media content integration
+- Video content transcription presence
+- Podcast mention and discussions
+- Industry publication references
+- Academic and research citations
+- News coverage and media mentions
 
-**Direct Competitor Comparison:**
-- [Competitor 1]: Detailed analysis of mention frequency, context, and positioning
-- [Competitor 2]: Comparative assessment of market presence and AI visibility
-- [Competitor 3]: Analysis of competitive advantages and visibility patterns
-- [Additional Competitors]: Comprehensive competitive landscape mapping
+Phase 4: STRATEGIC ANALYSIS & RECOMMENDATIONS
 
-**Market Share of Voice Metrics:**
-- Quantified percentage breakdown of competitor mentions
-- Analysis of co-mention patterns and competitive groupings
-- Assessment of unique positioning and differentiation
-- Evaluation of competitive strengths and weaknesses
-- Market gap analysis and opportunity identification
+COMPREHENSIVE Visibility Gap Analysis:
 
-### Platform-Specific Visibility Assessment
+ICP ALIGNMENT ASSESSMENT:
+- Current visibility vs. ideal customer search patterns
+- Gap identification by customer segment
+- Geographic visibility variations
+- Industry-specific performance analysis
+- Query complexity performance correlation
+- Competitive displacement opportunities
+- Market education needs and opportunities
+- Content gaps and development priorities
 
-**ChatGPT Analysis:**
-- Detailed performance metrics and mention patterns
-- Analysis of response quality and accuracy
-- Assessment of competitive positioning
-- Evaluation of knowledge base accuracy
+DETAILED Strategic Recommendations:
 
-**Claude Analysis:**
-- Performance comparison with other platforms
-- Unique positioning or description variations
-- Quality of responses and recommendations
+IMMEDIATE ACTIONS (0-3 months):
+1. Content Optimization Strategy
+   - Specific content pieces to create/modify
+   - SEO optimization for AI discoverability
+   - Technical content enhancement
+   - Case study development and optimization
+   - Website structure improvements
+   - Schema markup implementation
 
-**Google Bard/Gemini Analysis:**
-- Search integration impact on visibility
-- Comparison with traditional search results
-- Analysis of knowledge source attribution
+2. Digital Presence Enhancement
+   - Social media strategy optimization
+   - Industry publication engagement
+   - Speaking opportunity pursuit
+   - Webinar series development
+   - Podcast guest appearances
+   - Expert interview programs
 
-**Other AI Platforms:**
-- Emerging platform analysis and future considerations
-- Specialized platform performance (industry-specific AI tools)
+3. Competitive Response Tactics
+   - Direct competitor analysis and response
+   - Differentiation messaging development
+   - Unique value proposition enhancement
+   - Market positioning adjustments
+   - Pricing strategy optimization
+   - Partnership opportunity identification
 
----
+MEDIUM-TERM STRATEGY (3-12 months):
+[Provide extensive detail for medium-term initiatives]
 
-## Phase 4: Strategic Analysis and Detailed Recommendations
+LONG-TERM VISION (12+ months):
+[Provide comprehensive long-term strategy]
 
-### Comprehensive Visibility Gap Analysis
+Phase 5: DETAILED IMPLEMENTATION ROADMAP
 
-**ICP Alignment Assessment (Detailed):**
-- Quantified analysis of current visibility vs. ideal customer search behavior
-- Identification of specific search scenarios where ${brandName} underperforms
-- Analysis of competitor advantages in key ICP scenarios
-- Assessment of message consistency across platforms
-- Evaluation of positioning accuracy relative to actual capabilities
+COMPREHENSIVE Implementation Plan:
 
-**Topic Coverage Evaluation (Comprehensive):**
-- Performance strength analysis across each identified topic
-- Detailed gap analysis with specific improvement opportunities
-- Competitive performance comparison by topic area
-- Market opportunity sizing for each gap identified
-- Strategic importance weighting and prioritization framework
+MONTH-BY-MONTH BREAKDOWN:
+Month 1-3: [Detailed weekly activities and deliverables]
+Month 4-6: [Detailed quarterly objectives and milestones]
+Month 7-12: [Long-term strategic initiatives]
 
-**Geographic and Market-Specific Analysis:**
-- Regional performance variations and local competitor analysis
-- Market-specific visibility patterns and opportunities
-- Cultural and language considerations for global markets
-- Local market penetration strategies and requirements
+RESOURCE ALLOCATION:
+- Team requirements and role definitions
+- Budget allocation by initiative
+- Technology and tool requirements
+- External partnership needs
+- Training and development requirements
+- Performance monitoring systems
 
-### Strategic Recommendations (Detailed Implementation Plans)
+SUCCESS METRICS & KPIs:
+- Visibility measurement frameworks
+- Competitive benchmarking systems
+- ROI calculation methodologies
+- Performance tracking dashboards
+- Regular review and optimization processes
 
-**Immediate Impact Actions (0-3 months) - Detailed Plans:**
+DETAILED METHODOLOGY DOCUMENTATION:
 
-**Content Optimization Strategy:**
-- Specific content pieces to create or modify
-- SEO optimization requirements for AI discoverability
-- Technical content improvements for better AI comprehension
-- Content distribution strategy across multiple channels
+Research Protocol:
+- Data collection procedures
+- Quality assurance processes
+- Verification methodologies
+- Update and maintenance procedures
+- Competitive intelligence gathering
+- Performance measurement systems
 
-**Digital Presence Enhancement:**
-- Website optimization for AI crawler accessibility
-- Technical SEO improvements for better content indexing
-- Schema markup implementation for structured data
-- Link building strategy for authority enhancement
+EXECUTIVE CONCLUSION & NEXT STEPS:
 
-**Competitive Response Tactics:**
-- Specific actions to counter competitor advantages
-- Defensive strategies for protecting existing visibility
-- Opportunity exploitation for competitor weaknesses
+[Provide comprehensive summary with specific, actionable next steps]
 
-**Medium-term Strategy (3-12 months) - Comprehensive Development:**
-
-**Thought Leadership Development Program:**
-- Detailed content calendar with specific topics and formats
-- Speaking engagement strategy and target events
-- Industry publication and media outreach plan
-- Expert positioning and authority building initiatives
-
-**Strategic Partnership Development:**
-- Identification of potential collaboration partners
-- Partnership strategy for enhanced visibility and credibility
-- Co-marketing opportunities and joint content creation
-- Industry ecosystem positioning and relationship building
-
-**Advanced Content Strategy:**
-- Long-form content development for expertise demonstration
-- Case study development and success story amplification
-- White paper and research publication strategy
-- Multimedia content creation for broader reach
-
-**Long-term Vision (12+ months) - Market Leadership Strategy:**
-
-**Industry Authority Establishment:**
-- Comprehensive strategy for becoming the recognized market leader
-- Industry recognition and award pursuit strategy
-- Market education and category creation opportunities
-- Ecosystem influence and standards development participation
-
-**Advanced AI Optimization:**
-- Next-generation AI platform preparation and optimization
-- Advanced content structuring for improved AI comprehension
-- Predictive content strategy based on AI evolution trends
-- Platform-specific optimization strategies
-
-### Implementation Roadmap (Detailed Project Plan)
-
-**Phase 1: Foundation Building (Months 1-3)**
-- Week-by-week implementation timeline
-- Resource allocation and team responsibility assignments
-- Budget requirements and ROI projections
-- Success metrics and KPI tracking systems
-- Risk mitigation strategies and contingency plans
-
-**Phase 2: Strategic Development (Months 4-12)**
-- Quarterly milestone definitions and success criteria
-- Resource scaling requirements and team expansion plans
-- Partnership development timeline and target identification
-- Market expansion strategies and geographic priorities
-- Competitive response and defensive strategies
-
-**Phase 3: Market Leadership (Months 13+)**
-- Long-term vision and market positioning goals
-- Industry influence and ecosystem development
-- Advanced technology adoption and optimization
-- Global market expansion and localization strategies
-- Succession planning and sustainable competitive advantage
-
----
-
-## Required Output Format and Quality Standards
-
-**Executive Summary (Minimum 500 words):**
-- Comprehensive overview of key findings and strategic implications
-- Critical visibility gaps and high-impact opportunities
-- Strategic priorities and resource allocation recommendations
-- Expected outcomes and success metrics
-
-**Detailed Findings Section (Minimum 2000 words):**
-- Complete analysis breakdown with supporting data
-- Specific examples and evidence for all claims
-- Quantified metrics wherever possible
-- Competitive analysis with named competitors
-- Market opportunity assessment with sizing
-
-**Strategic Recommendations (Minimum 1500 words):**
-- Detailed implementation plans with timelines
-- Resource requirements and budget considerations
-- Risk assessment and mitigation strategies
-- Success metrics and measurement frameworks
-- Expected ROI and business impact analysis
-
-**QUALITY REQUIREMENTS:**
-- All recommendations must be specific and actionable
-- Include concrete examples and case studies where relevant
-- Provide step-by-step implementation guidance
-- Quantify opportunities and expected outcomes wherever possible
-- Ensure all analysis is evidence-based and well-substantiated
-
-This analysis should provide ${brandName} with a comprehensive strategic roadmap for dramatically improving their visibility when target customers actively seek solutions through AI platforms. The depth and quality should justify significant strategic investment and provide clear direction for competitive advantage development.`;
+MANDATORY: This analysis MUST be 6,000-8,000 words and utilize all 8,192 available output tokens. Provide exhaustive detail in every section with specific examples, data points, and comprehensive strategic guidance. This is a premium consulting deliverable requiring maximum depth and value.`;
 };
 
 module.exports = {

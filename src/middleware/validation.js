@@ -17,6 +17,13 @@ const brandAnalysisSchema = Joi.object({
       'any.required': 'Brand name is required'
     }),
     
+  websiteUrl: Joi.string()
+    .uri({ scheme: ['http', 'https'] })
+    .optional()
+    .messages({
+      'string.uri': 'Website URL must be a valid HTTP or HTTPS URL'
+    }),
+    
   includeHistory: Joi.boolean()
     .optional()
     .default(false),

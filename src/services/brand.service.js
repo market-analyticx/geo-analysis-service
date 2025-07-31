@@ -7,41 +7,26 @@ const logger = require('../utils/logger');
 class BrandService {
   constructor() {
     this.reportsDir = config.reportsDir;
-    this.ensureReportsDirectory();
   }
 
   /**
-   * Ensure reports directory exists
-   */
-  async ensureReportsDirectory() {
-    const fs = require('fs').promises;
-    try {
-      await fs.access(this.reportsDir);
-    } catch (error) {
-      await fs.mkdir(this.reportsDir, { recursive: true });
-      logger.info(`Created reports directory: ${this.reportsDir}`);
-    }
-  }
-
-  /**
-   * Analyze a brand and save to file only
+   * Analyze a brand and save to file
    * @param {string} brandName - The brand name to analyze
    * @param {Object} options - Analysis options
-   * @returns {Promise<Object>} Analysis result with file info
+   * @returns {Promise<Object>} Analysis result
    */
   async analyzeBrand(brandName, options = {}) {
     const requestId = uuidv4();
     const startTime = Date.now();
 
-    logger.info(`Starting brand analysis request`, {
-      requestId,
-      brandName,
-      options
-    });
+    logger.info(`Starting brand analysis`, { requestId, brandName });
 
     try {
-      // Perform Claude analysis
-      const analysisResult = await claudeService.analyzeBrand(brandName, options);
+      // Get analysis from Claude
+      const analysisResult = await claudeService.analyzeBrand(brandName, {
+        ...options,
+        websiteUrl: options.websiteUrl
+      });
       
       // Prepare metadata
       const metadata = {
@@ -52,25 +37,25 @@ class BrandService {
         options
       };
 
-      // Save analysis directly to text file
+      // Save to file
       const filePath = await fileService.saveAnalysisToFile(
         brandName, 
         analysisResult.analysis, 
         metadata
       );
 
-      logger.info(`Brand analysis completed and saved to file`, {
+      logger.info(`Brand analysis completed`, {
         requestId,
         brandName,
         filePath,
-        totalProcessingTime: metadata.totalProcessingTime
+        totalProcessingTime: metadata.totalProcessingTime,
+        responseLength: analysisResult.analysis.length
       });
 
       return {
         success: true,
         requestId,
         brandName,
-        message: `Analysis completed and saved to file`,
         filePath,
         fileName: filePath.split('/').pop(),
         metadata: {
@@ -79,26 +64,24 @@ class BrandService {
           outputTokens: metadata.outputTokens,
           processingTime: metadata.totalProcessingTime,
           createdAt: metadata.createdAt,
-          model: metadata.model
+          model: metadata.model,
+          responseLength: metadata.responseLength
         }
       };
 
     } catch (error) {
-      const totalProcessingTime = Date.now() - startTime;
-      
       logger.error(`Brand analysis failed`, {
         requestId,
         brandName,
         error: error.message,
-        totalProcessingTime
+        totalProcessingTime: Date.now() - startTime
       });
-
       throw error;
     }
   }
 
   /**
-   * Get all saved files
+   * Get all saved reports
    * @param {Object} filters - Filter options
    * @returns {Promise<Array>} List of files
    */
@@ -106,8 +89,8 @@ class BrandService {
     try {
       const files = await fileService.getFilesList();
       
-      // Apply brand name filter if provided
       let filteredFiles = files;
+      
       if (filters.brandName) {
         const searchTerm = filters.brandName.toLowerCase();
         filteredFiles = files.filter(file => 
@@ -115,7 +98,6 @@ class BrandService {
         );
       }
       
-      // Apply date filters if provided
       if (filters.fromDate) {
         const fromDate = new Date(filters.fromDate);
         filteredFiles = filteredFiles.filter(file => 
@@ -147,8 +129,6 @@ class BrandService {
 
   /**
    * Get specific file content
-   * @param {string} fileName - File name
-   * @returns {Promise<Object>} File content and info
    */
   async getReport(fileName) {
     try {
@@ -177,16 +157,12 @@ class BrandService {
 
   /**
    * Delete file
-   * @param {string} fileName - File name
-   * @returns {Promise<boolean>} Success status
    */
   async deleteReport(fileName) {
     try {
       const success = await fileService.deleteFile(fileName);
-      
       logger.info(`Report deleted: ${fileName}`);
       return success;
-      
     } catch (error) {
       logger.error(`Failed to delete report: ${error.message}`, { fileName });
       throw error;
@@ -195,7 +171,6 @@ class BrandService {
 
   /**
    * Get service statistics
-   * @returns {Promise<Object>} Service statistics
    */
   async getStatistics() {
     try {
@@ -203,13 +178,12 @@ class BrandService {
       const files = await fileService.getFilesList();
       
       return {
-        totalFiles: fileStats.totalFiles,
+        totalReports: fileStats.totalFiles,
         totalSize: fileStats.totalSize,
         totalSizeFormatted: this.formatFileSize(fileStats.totalSize),
         averageSize: fileStats.averageSize,
         averageSizeFormatted: this.formatFileSize(fileStats.averageSize),
         latestFile: fileStats.latestFile,
-        oldestFile: fileStats.oldestFile,
         recentFiles: files.slice(0, 5).map(file => ({
           fileName: file.fileName,
           size: this.formatFileSize(file.size),
@@ -224,17 +198,13 @@ class BrandService {
   }
 
   /**
-   * Format file size for display
-   * @param {number} bytes - File size in bytes
-   * @returns {string} Formatted size
+   * Format file size
    */
   formatFileSize(bytes) {
     if (bytes === 0) return '0 B';
-    
     const k = 1024;
     const sizes = ['B', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 }
