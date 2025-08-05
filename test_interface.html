@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI/LLM Brand Visibility Analysis - Test Interface</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .form-container {
+            padding: 40px;
+        }
+
+        .tab-container {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px 20px;
+            text-align: center;
+            cursor: pointer;
+            background: #f8f9fa;
+            border: none;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 1rem;
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #fff;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .array-container {
+            border: 2px dashed #e1e8ed;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .array-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+
+        .array-item input {
+            flex: 1;
+        }
+
+        .remove-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .remove-btn:hover {
+            background: #c0392b;
+            transform: scale(1.1);
+        }
+
+        .add-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .add-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .result {
+            display: none;
+            margin-top: 30px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border-left: 5px solid #28a745;
+        }
+
+        .result h3 {
+            color: #28a745;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .result-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-height: 500px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 5px solid #dc3545;
+        }
+
+        .config-section {
+            background: #e7f3ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .config-section h4 {
+            color: #0066cc;
+            margin-bottom: 15px;
+        }
+
+        .config-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .config-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .config-value {
+            color: #666;
+            font-family: monospace;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tab {
+                font-size: 0.9rem;
+                padding: 12px 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .form-container {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 AI/LLM Brand Visibility Analysis</h1>
+            <p>Comprehensive Brand Analysis & Share-of-Voice Audit</p>
+        </div>
+
+        <div class="form-container">
+            <!-- Configuration Section -->
+            <div class="config-section">
+                <h4>📡 Service Configuration</h4>
+                <div class="config-item">
+                    <span class="config-label">API Endpoint:</span>
+                    <input type="text" id="apiEndpoint" class="config-value" value="http://localhost:3000" style="border: 1px solid #ddd; width: 200px;">
+                </div>
+                <div class="config-item">
+                    <span class="config-label">API Key:</span>
+                    <input type="password" id="apiKey" class="config-value" placeholder="Enter your API key" style="border: 1px solid #ddd; width: 200px;">
+                </div>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="tab-container">
+                <button class="tab active" onclick="showTab('basic')">✨ Basic Info</button>
+                <button class="tab" onclick="showTab('competitors')">🥊 Competitors</button>
+                <button class="tab" onclick="showTab('topics')">🎯 Topics & Personas</button>
+                <button class="tab" onclick="showTab('prompts')">🤖 AI Prompts</button>
+            </div>
+
+            <form id="analysisForm">
+                <!-- Basic Info Tab -->
+                <div id="basic" class="tab-content active">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="email">✉️ Email Address <span class="required">*</span></label>
+                            <input type="email" id="email" name="email" placeholder="your@email.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="websiteUrl">🌐 Website URL <span class="required">*</span></label>
+                            <input type="url" id="websiteUrl" name="websiteUrl" placeholder="https://yourwebsite.com" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="brandName">🏢 Company Brand Full Name <span class="required">*</span></label>
+                        <input type="text" id="brandName" name="brandName" placeholder="Your Company Name" required>
+                    </div>
+                </div>
+
+                <!-- Competitors Tab -->
+                <div id="competitors" class="tab-content">
+                    <div class="form-group">
+                        <label>🥊 Competitors (Optional - Max 5)</label>
+                        <p style="color: #666; margin-bottom: 15px; font-size: 0.95rem;">
+                            Add your main competitors. If you leave this empty, AI will identify competitors for you.
+                        </p>
+                        <div class="array-container" id="competitorsContainer">
+                            <div class="array-item">
+                                <input type="text" name="competitors[]" placeholder="Competitor name or website">
+                                <button type="button" class="remove-btn" onclick="removeItem(this)">×</button>
+                            </div>
+                        </div>
+                        <button type="button" class="add-btn" onclick="addCompetitor()">+ Add Competitor</button>
+                    </div>
+                </div>
+
+                <!-- Topics & Personas Tab -->
+                <div id="topics" class="tab-content">
+                    <div class="form-group">
+                        <label>🎯 Key Topics (Optional - Max 4)</label>
+                        <p style="color: #666; margin-bottom: 15px; font-size: 0.95rem;">
+                            Specify key topics you want to focus on. If empty, AI will identify relevant topics.
+                        </p>
+                        <div class="array-container" id="topicsContainer">
+                            <div class="array-item">
+                                <input type="text" name="topics[]" placeholder="e.g., AI photo editing, online image enhancement">
+                                <button type="button" class="remove-btn" onclick="removeItem(this)">×</button>
+                            </div>
+                        </div>
+                        <button type="button" class="add-btn" onclick="addTopic()">+ Add Topic</button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="personas">👥 Target Personas (ICPs)</label>
+                        <p style="color: #666; margin-bottom: 10px; font-size: 0.95rem;">
+                            Describe your ideal customer profiles. If empty, AI will create personas for you.
+                        </p>
+                        <textarea id="personas" name="personas" placeholder="Example: Small business owners, content creators, marketing professionals looking for AI-powered solutions..."></textarea>
+                    </div>
+                </div>
+
+                <!-- AI Prompts Tab -->
+                <div id="prompts" class="tab-content">
+                    <div class="form-group">
+                        <label>🤖 AI Search Prompts (Optional - Max 4)</label>
+                        <p style="color: #666; margin-bottom: 15px; font-size: 0.95rem;">
+                            Add realistic questions users might ask AI about your services. If empty, AI will generate relevant prompts.
+                        </p>
+                        <div class="array-container" id="promptsContainer">
+                            <div class="array-item">
+                                <input type="text" name="prompts[]" placeholder="e.g., best AI photo editing tools online free">
+                                <button type="button" class="remove-btn" onclick="removeItem(this)">×</button>
+                            </div>
+                        </div>
+                        <button type="button" class="add-btn" onclick="addPrompt()">+ Add Prompt</button>
+                        <p style="color: #666; font-size: 0.9rem; margin-top: 10px; font-style: italic;">
+                            💡 These should be realistic questions users would ask AI systems to find services like yours
+                        </p>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    🚀 Run AI Visibility Analysis
+                </button>
+            </form>
+
+            <!-- Loading State -->
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <h3>🔍 Analyzing Brand Visibility...</h3>
+                <p>This may take 30-60 seconds for a comprehensive analysis</p>
+            </div>
+
+            <!-- Results Section -->
+            <div class="result" id="result">
+                <h3>✅ Analysis Complete!</h3>
+                <div class="result-content" id="resultContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab Management
+        function showTab(tabName) {
+            // Hide all tab contents
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+            
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        // Dynamic Array Management
+        function addCompetitor() {
+            const container = document.getElementById('competitorsContainer');
+            if (container.children.length >= 5) {
+                alert('Maximum 5 competitors allowed');
+                return;
+            }
+            
+            const div = document.createElement('div');
+            div.className = 'array-item';
+            div.innerHTML = `
+                <input type="text" name="competitors[]" placeholder="Competitor name or website">
+                <button type="button" class="remove-btn" onclick="removeItem(this)">×</button>
+            `;
+            container.appendChild(div);
+        }
+
+        function addTopic() {
+            const container = document.getElementById('topicsContainer');
+            if (container.children.length >= 4) {
+                alert('Maximum 4 topics allowed');
+                return;
+            }
+            
+            const div = document.createElement('div');
+            div.className = 'array-item';
+            div.innerHTML = `
+                <input type="text" name="topics[]" placeholder="e.g., AI photo editing, online image enhancement">
+                <button type="button" class="remove-btn" onclick="removeItem(this)">×</button>
+            `;
+            container.appendChild(div);
+        }
+
+        function addPrompt() {
+            const container = document.getElementById('promptsContainer');
+            if (container.children.length >= 4) {
+                alert('Maximum 4 prompts allowed');
+                return;
+            }
+            
+            const div = document.createElement('div');
+            div.className = 'array-item';
+            div.innerHTML = `
+                <input type="text" name="prompts[]" placeholder="e.g., best AI photo editing tools online free">
+                <button type="button" class="remove-btn" onclick="removeItem(this)">×</button>
+            `;
+            container.appendChild(div);
+        }
+
+        function removeItem(button) {
+            const container = button.parentNode.parentNode;
+            if (container.children.length > 1) {
+                button.parentNode.remove();
+            } else {
+                alert('At least one item must remain');
+            }
+        }
+
+        // Form Submission
+        document.getElementById('analysisForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const apiEndpoint = document.getElementById('apiEndpoint').value;
+            const apiKey = document.getElementById('apiKey').value;
+            
+            if (!apiKey) {
+                alert('Please enter your API key');
+                return;
+            }
+
+            // Show loading state
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('result').style.display = 'none';
+
+            try {
+                // Collect form data
+                const formData = new FormData(this);
+                const data = {};
+                
+                // Basic fields
+                data.brandName = formData.get('brandName');
+                data.websiteUrl = formData.get('websiteUrl');
+                data.email = formData.get('email');
+                data.personas = formData.get('personas') || '';
+                
+                // Array fields
+                data.competitors = formData.getAll('competitors[]').filter(item => item.trim() !== '');
+                data.topics = formData.getAll('topics[]').filter(item => item.trim() !== '');
+                data.prompts = formData.getAll('prompts[]').filter(item => item.trim() !== '');
+
+                console.log('Sending data:', data);
+
+                // Make API request
+                const response = await fetch(`${apiEndpoint}/api/analysis/comprehensive`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    // Show success result
+                    document.getElementById('result').classList.remove('error');
+                    document.getElementById('result').querySelector('h3').innerHTML = '✅ Analysis Complete!';
+                    
+                    // Format the result nicely for client display
+                    const resultHTML = `
+<strong>📊 Analysis Summary:</strong>
+Brand: ${result.result.brandName}
+Website: ${result.result.websiteUrl}
+Contact: ${result.result.email}
+File: ${result.result.fileName}
+Brand Folder: ${result.result.brandFolder}
+
+<strong>📈 Performance Metrics:</strong>
+Processing Time: ${(result.result.processingTime / 1000).toFixed(1)} seconds
+Quality Level: ${result.result.responseQuality?.qualityLevel || 'N/A'}
+Word Count: ~${result.result.responseQuality?.wordCount?.toLocaleString() || 'N/A'} words
+
+<strong>🔍 Form Data Processed:</strong>
+Competitors: ${result.result.responseQuality?.formDataProcessed?.competitorsProvided || 0}
+Topics: ${result.result.responseQuality?.formDataProcessed?.topicsProvided || 0}
+Prompts: ${result.result.responseQuality?.formDataProcessed?.promptsProvided || 0}
+Personas: ${result.result.responseQuality?.formDataProcessed?.personasProvided ? 'Yes' : 'No'}
+
+${'='.repeat(80)}
+COMPREHENSIVE ANALYSIS REPORT:
+${'='.repeat(80)}
+
+${result.result.analysisText || 'Analysis text not available'}
+                    `;
+                    
+                    document.getElementById('resultContent').textContent = resultHTML;
+                    document.getElementById('result').style.display = 'block';
+                } else {
+                    throw new Error(result.error || result.message || 'Analysis failed');
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                
+                // Show error result
+                document.getElementById('result').classList.add('error');
+                document.getElementById('result').querySelector('h3').innerHTML = '❌ Analysis Failed';
+                document.getElementById('resultContent').textContent = `Error: ${error.message}
+
+Please check:
+1. Your API key is correct
+2. The service is running at ${apiEndpoint}
+3. Your network connection
+4. All required fields are filled correctly
+
+Error Details: ${error.toString()}`;
+                document.getElementById('result').style.display = 'block';
+            } finally {
+                // Hide loading state
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('submitBtn').disabled = false;
+            }
+        });
+
+        // Auto-populate some demo data
+        window.addEventListener('load', function() {
+            // You can pre-fill some test data here if needed
+            document.getElementById('brandName').value = 'Oxagile';
+            document.getElementById('websiteUrl').value = 'https://www.oxagile.com/';
+            document.getElementById('email').value = 'test@oxagile.com';
+        });
+    </script>
+</body>
+</html>
