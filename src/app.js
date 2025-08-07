@@ -32,8 +32,10 @@ const corsOptions = {
     'http://127.0.0.1:3001',
     'http://127.0.0.1:8000',
     'http://127.0.0.1:8080',
-    'https://marketanalyticx.com',        // Replace with your actual domain
-    'https://www.marketanalyticx.com',    // Replace with your actual domain
+    'https://www.marketanalyticx.com',
+    'https://marketanalyticx.com',
+    'http://www.marketanalyticx.com',
+    'http://marketanalyticx.com',    // Replace with your actual domain
     'null' // For file:// protocol during development
   ],
   credentials: true,

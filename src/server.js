@@ -10,8 +10,8 @@ app.listen(PORT, () => {
   logger.info(`🏃 Environment: ${config.nodeEnv}`);
   logger.info(`📂 Reports directory: ${config.reportsDir}`);
   logger.info(`📝 Logs directory: ${config.logsDir}`);
-  logger.info(`🔗 Service URL: http://localhost:${PORT}`);
-  logger.info(`🏥 Health check: http://localhost:${PORT}/api/health`);
+  logger.info(`🔗 Service URL: http://0.0.0.0:${PORT}`);
+  logger.info(`🏥 Health check: http://0.0.0.0:${PORT}/api/health`);
 });
 
 // Graceful shutdown
